@@ -1,0 +1,119 @@
+<br><br><br>
+<div class="mt-5 mx-auto">
+    <div class="row">
+      <div class="col-md-5 mx-auto border" >
+        <h3 class="my-4 text-center">In Traffic Insights</h3>
+        <div class="table-responsive table-container" *ngIf="interfaceData?.length; else noData">
+          <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>Date</th>
+                <th>Avg In Traffic (kbps)</th>
+                <th>Max In Traffic (kbps)</th>
+                <th>Min In Traffic (kbps)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of interfaceData">
+                <td>{{ item.date ? item.date : item.time_slot }}</td>
+                <td>{{ (item.avg_in_traffic / 1000).toFixed(2) }}</td>
+                <td>{{ (item.max_in_traffic / 1000).toFixed(2) }}</td>
+                <td>{{ (item.min_in_traffic / 1000).toFixed(2) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  
+      <div class="col-md-5 mx-auto border">
+        <h3 class="my-4 text-center">Out Traffic Insights</h3>
+        <div class="table-responsive table-container" *ngIf="interfaceData.length!=0;else noData">
+          <table class="table table-bordered table-striped w-120">
+            <thead class="table-dark">
+              <tr>
+                <th>Date</th>
+                <th>Avg Out Traffic (kbps)</th>
+                <th>Max Out Traffic (kbps)</th>
+                <th>Min Out Traffic (kbps)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of interfaceData">
+                <td>{{ item.date ? item.date : item.time_slot }}</td>
+                <td>{{ (item.avg_out_traffic / 1000).toFixed(2) }}</td>
+                <td>{{ (item.max_out_traffic / 1000).toFixed(2) }}</td>
+                <td>{{ (item.min_out_traffic / 1000).toFixed(2) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row mb-3">
+        <div class="col-md-5 mx-auto border">
+          <h3 class="my-4 text-center">Error Data Insights</h3>
+          <div class="table-responsive table-container" *ngIf="interfaceData.length!=0;else noData">
+            <table class="table table-bordered table-striped">
+              <thead class="table-dark">
+                <tr>
+                  <th>Date</th>
+                  <th>Total In Errors</th>
+                  <th>Max In Errors</th>
+                  <th>Min In Errors</th>
+                  <th>Total Out Erros</th>
+                  <th>Max Out Errors</th>
+                  <th>Min Out Errors</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of interfaceData">
+                  <td>{{ item.date ? item.date : item.time_slot }}</td>
+                  <td>{{ item.count_in_error }}</td>
+                  <td>{{ item.max_in_error  }}</td>
+                  <td>{{ item.min_in_error }}</td>
+                  <td>{{ item.count_out_error }}</td>
+                  <td>{{ item.max_out_error  }}</td>
+                  <td>{{ item.min_out_error }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+    
+        <div class="col-md-5 mx-auto border">
+          <h3 class="my-4 text-center">Discard Data Insights</h3>
+          <div class="table-responsive table-container" *ngIf="interfaceData.length!=0;else noData">
+            <table class="table table-bordered table-striped w-120">
+              <thead class="table-dark">
+                <tr class="fs-6">
+                  <th>Date</th>
+                  <th>Total In Discards</th>
+                  <th>Max In Discards</th>
+                  <th>Min In Discards</th>
+                  <th>Total OutDiscards</th>
+                  <th>Max Out Discards</th>
+                  <th>Min Out Discards</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of interfaceData">
+                  <td>{{ item.date ? item.date : item.time_slot }}</td>
+                  <td>{{ item.count_in_discard }}</td>
+                  <td>{{ item.max_in_discard  }}</td>
+                  <td>{{ item.min_in_discard }}</td>
+                  <td>{{ item.count_out_discard }}</td>
+                  <td>{{ item.max_out_discard  }}</td>
+                  <td>{{ item.min_out_discard }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <ng-template #noData>
+    <h6 class="text-center">No Data Found</h6>
+  </ng-template>
+  
