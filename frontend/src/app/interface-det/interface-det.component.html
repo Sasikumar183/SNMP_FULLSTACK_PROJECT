@@ -1,0 +1,58 @@
+<div class="mt-4">
+  <div class="d-flex">
+    <a class="d-flex justify-content-center align-items-center bg-dark text-white p-3 rounded ms-3 shadow-lg text-decoration-none"
+    style="width: 35px; height: 20px; font-size: 30px; cursor: pointer; transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;"
+    (click)="goback()">
+    &#8592;
+   </a>
+     <h2 class="mb-3 mt-5">Specific Interface Details</h2>
+  </div>
+  
+  <div>
+    <select class="form-select mb-3 w-25 float-end" [(ngModel)]="selectedItem" (change)="onSelectChange($event)"
+      name="durationSelect">
+      <option *ngFor="let item of duration" [value]="item.value">
+        {{ item.label }}
+      </option>
+    </select>
+  </div>
+
+  <br><br>
+
+  <div class="container mt-5">
+    <div class="row g-">
+      <div class="py-4 px-6 col-md-6 shadow-sm rounded border">
+        <h5 class="text-decoration-underline">Interface Details</h5>
+        <div *ngIf="general">
+          <p>Interface Name: {{general.name}}</p>
+          <p>IP Address : {{general.ip}}</p>
+          <p>Index : {{general.index}}</p>
+        </div>
+      </div>
+
+      <!-- Status Details -->
+      <div class="col-md-6 shadow-sm p-2 rounded border">
+        <h5 class="text-decoration-underline">Status</h5>
+        <div *ngIf="status">
+          <p>Admin Status : {{status.admin_status === 1 ? 'Up' : 'Down'}}</p>
+          <p>Operation Status : {{status.operation_status === 1 ? 'Up' : 'Down'}}</p>
+          <p>Status : {{ status.admin_status === 1 ? (status.operation_status === 1 ? 'Up' : 'Critical') : 'Down' }} </p>
+        </div>
+      </div>
+    </div>
+  </div>
+<br><br>
+  <div class="visualization" >
+    <select class="form-select mb-3 w-25 float-end" [(ngModel)]="selectedType" (change)="onTypeChange($event)">
+      <option *ngFor="let item of type" [value]="item">
+        {{ item }}
+      </option>
+    </select>
+  </div>
+  <div *ngIf="selectedType=='Tables'; else LineChart">
+    <app-tableform></app-tableform>
+  </div>
+  <ng-template #LineChart>
+    <app-linechart></app-linechart>
+  </ng-template>
+

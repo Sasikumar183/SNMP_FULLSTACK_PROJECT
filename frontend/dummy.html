@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time-Series Traffic Chart</title>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <style>
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            padding: 5px;
+            border: 1px solid black;
+            font-size: 12px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="my_dataviz"></div>
+    <div class="tooltip" style="opacity: 0;"></div>
+
+    <script>
+        var data = [
+            { "time_slot": "2025-03-12 11:40:00", "avg_in_traffic": 0 },
+            { "time_slot": "2025-03-12 11:50:00", "avg_in_traffic": 0 },
+            { "time_slot": "2025-03-12 12:00:00", "avg_in_traffic": 2300.7059 },
+            { "time_slot": "2025-03-12 12:10:00", "avg_in_traffic": 86994.1 },
+            { "time_slot": "2025-03-12 12:20:00", "avg_in_traffic": 205644.85 },
+            { "time_slot": "2025-03-12 12:30:00", "avg_in_traffic": 303076 },
+            { "time_slot": "2025-03-13 12:30:00", "avg_in_traffic": 303076 },
+
+        ];
+
+        // Parse the date format
+        var parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+
+        // Convert time values to Date objects
+        data.forEach(d => d.time_slot = parseTime(d.time_slot));
+
+        // Set up SVG dimensions
+        var margin = { top: 10, right: 30, bottom: 30, left: 60 },
+            width = 600 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        var svg = d3.select("#my_dataviz")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // Set up X and Y scales
+        var x = d3.scaleTime()
+            .domain(d3.extent(data, d => d.time_slot))
+            .range([0, width]);
+
+        var y = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.avg_in_traffic / 1000) + 10])
+            .range([height, 0]);
+
+        // Add X-axis
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x).ticks(5));
+
+        // Add Y-axis
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        // Add line
+        var line = d3.line()
+            .x(d => x(d.time_slot))
+            .y(d => y(d.avg_in_traffic / 1000));
+
+        svg.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("d", line);
+
+        // Tooltip
+        var tooltip = d3.select(".tooltip");
+
+        // Add dots for hover interaction
+        svg.selectAll("dot")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", d => x(d.time_slot))
+            .attr("cy", d => y(d.avg_in_traffic / 1000))
+            .attr("r", 5)
+            .attr("fill", "red")
+            .on("mouseover", function (d) {
+                tooltip.transition().duration(200).style("opacity", 1);
+                tooltip.html(
+                    `Time: ${d3.timeFormat("%Y-%m-%d %H:%M:%S")(d.time_slot)}<br>
+                     Traffic: ${(d.avg_in_traffic / 1000).toFixed(2)} kbps`
+                )
+                .style("left", (d3.event.pageX + 10) + "px")
+                .style("top", (d3.event.pageY - 10) + "px");
+            })
+            .on("mousemove", function () {
+                tooltip.style("left", (d3.event.pageX + 10) + "px")
+                       .style("top", (d3.event.pageY - 10) + "px");
+            })
+            .on("mouseout", function () {
+                tooltip.transition().duration(200).style("opacity", 0);
+            });
+            tooltip.html(
+    `Time: ${d3.timeFormat("%Y-%m-%d %H:%M:%S")(d.time_slot)}<br>
+     Traffic: ${(d.avg_in_traffic / 1000).toFixed(2)} kbps`
+)
+
+    </script>
+</body>
+</html>

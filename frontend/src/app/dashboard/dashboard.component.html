@@ -1,0 +1,110 @@
+<div class="container mt-4">
+  <h2 class="mb-3">Network Interfaces</h2>
+
+  <div class="d-flex align-items-center  mt-3">
+    <p class="me-2 mb-0 fw-bold">IP</p>
+    <select class="form-select w-25" [(ngModel)]="selectedIP" (change)="onSelectChangeIP($event)">
+      <option *ngFor="let item of ip" [value]="item">
+        {{ item }}
+      </option>
+    </select>
+    
+</div>
+
+
+  <div>
+    <select class="form-select mb-3 w-25 float-end" [(ngModel)]="selectedValue" (change)="onSelectChange($event)">
+      <option *ngFor="let item of duration" [value]="item">
+        {{ item }}
+      </option>
+    </select>
+  </div>
+  <br><br><br>
+
+  <div class="table-responsive" *ngIf="data.length>0;else noData">
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Index</th>
+          <th>Interface Name</th>
+          <th>Avg In Traffic (kbps)</th>
+          <th>Avg Out Traffic (kbps)</th>
+          <th>Avg In Errors</th>
+          <th>Avg Out Errors</th>
+          <th>Avg In Discards</th>
+          <th>Avg Out Discards</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data; let i = index">
+          <td>{{ item.index }}</td>
+          <td>
+            <a (click)="navigateToPage(item.interface_id, item.index)" 
+               class="link text-decoration-none hover-underline">
+              {{ item.interface_name }}
+            </a>
+          </td>
+          <td>{{ item.avg_in_traffic == null ? "N/A" : (item.avg_in_traffic / 1000) | number:'1.2-2' }}</td>
+          <td>{{ item.avg_out_traffic == null ? "N/A" : (item.avg_out_traffic / 1000) | number:'1.2-2' }}</td>
+          <td>{{ item.avg_in_error == null ? "N/A" : (item.avg_in_error | number:'1.2-2') }}</td>
+          <td>{{ item.avg_out_error == null ? "N/A" : (item.avg_out_error | number:'1.2-2') }}</td>
+          <td>{{ item.avg_in_discard == null ? "N/A" : (item.avg_in_discard | number:'1.2-2') }}</td>
+          <td>{{ item.avg_out_discard == null ? "N/A" : (item.avg_out_discard | number:'1.2-2') }}</td>
+
+          <td>
+            {{ item.admin_status === "1" && item.oper_status === "1" ? 'Up' : 
+               item.admin_status === "1" && item.oper_status === "0" ? 'Critical' : 'Down' }}
+          </td>
+          
+          <td>
+            <div class="dropdown">
+              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                ⋮
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" (click)="openRenameModal(item.interface_id, item.interface_name)">
+                    Rename Interface
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item text-danger" (click)="deleteInterface(item.interface_id, item.index)">
+                    Delete Interface
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      
+    </table>
+  </div>
+</div>
+
+<!-- Rename Modal (Moved Outside Table) -->
+<div class="modal fade" id="renameModal" tabindex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Rename Interface</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" [(ngModel)]="newInterfaceName" class="form-control" placeholder="Enter new name">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="renameInterface()" data-bs-dismiss="modal">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #noData>
+  <h6 class="text-center">No Data Found</h6>
+</ng-template>
